@@ -1,7 +1,11 @@
 // src/pages/ForgotPasswordPage.tsx
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './ForgotPasswordPage.css'; // You'll create this CSS file next
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { AlertCircle, Mail } from 'lucide-react';
 
 const ForgotPasswordPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -57,32 +61,51 @@ const ForgotPasswordPage: React.FC = () => {
   };
 
   return (
-    <div className="forgot-password-page-container">
-      <div className="forgot-password-form-container">
-        <h1>Lupa Password?</h1>
-        <p className="subtitle">Gak apa-apa, kita bantu reset password kamu.</p>
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="email">Email Kamu</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="contoh@email.com"
-              required
-            />
-          </div>
-          {error && <p className="error-message">{error}</p>}
-          {message && <p className="success-message">{message}</p>}
-          <button type="submit" className="submit-button" disabled={loading}>
-            {loading ? 'Mengirim...' : 'Kirim Link Reset'}
-          </button>
-        </form>
-        <p className="back-to-login-text">
-          Inget passwordnya? <Link to="/login">Balik ke Login</Link>
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">Lupa Password?</CardTitle>
+          <p className="text-sm text-muted-foreground text-center">
+            Gak apa-apa, kita bantu reset password kamu.
+          </p>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Kamu</Label>
+              <Input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="contoh@email.com"
+                required
+              />
+            </div>
+            {error && (
+              <div className="flex items-center space-x-2 text-red-600 text-sm">
+                <AlertCircle className="h-4 w-4" />
+                <span>{error}</span>
+              </div>
+            )}
+            {message && (
+              <div className="flex items-center space-x-2 text-green-600 text-sm">
+                <Mail className="h-4 w-4" />
+                <span>{message}</span>
+              </div>
+            )}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Mengirim...' : 'Kirim Link Reset'}
+            </Button>
+          </form>
+          <p className="text-sm text-center text-muted-foreground mt-4">
+            Inget passwordnya?{' '}
+            <Link to="/login" className="text-primary hover:underline">
+              Balik ke Login
+            </Link>
+          </p>
+        </CardContent>
+      </Card>
     </div>
   );
 };
