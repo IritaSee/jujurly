@@ -15,7 +15,7 @@ export default defineConfig({
   server: {
     fs: {
       strict: false,
-    }
+    },
   },
   base: '/',
 })
