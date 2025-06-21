@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { useVirtualScrolling } from '../hooks/useVirtualScrolling'
 import { AIFeedbackCard } from './AIFeedbackCard'
 import { Card, CardContent } from '@/components/ui/card'
@@ -10,12 +10,9 @@ import { formatRelativeTime, getSentimentIcon } from '../lib/utils'
 import { type FeedbackItem } from '../store/feedbackStore'
 import {
   MessageSquare,
-  Star,
   Heart,
   Archive,
-  Eye,
   CheckSquare,
-  MoreVertical,
   Reply,
   Sparkles
 } from 'lucide-react'
@@ -67,7 +64,7 @@ export function VirtualizedFeedbackList({
   onProcessWithAI,
   onSelectSuggestion
 }: VirtualizedFeedbackListProps) {
-  const { virtualItems, totalHeight, scrollElementProps, containerProps } = useVirtualScrolling(
+  const { virtualItems, scrollElementProps, containerProps } = useVirtualScrolling(
     feedbackItems,
     {
       itemHeight,
@@ -294,7 +291,7 @@ export function VirtualizedFeedbackList({
   return (
     <div {...scrollElementProps}>
       <div {...containerProps}>
-        {virtualItems.map(({ index, start, item }) => {
+        {virtualItems.map(({ start, item }) => {
           const style: React.CSSProperties = {
             position: 'absolute',
             top: start,

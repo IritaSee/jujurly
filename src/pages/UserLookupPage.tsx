@@ -4,13 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { AlertCircle, Search, Users, Send } from 'lucide-react'
+import { AlertCircle, Search, Users } from 'lucide-react'
 
 const UserLookupPage: React.FC = () => {
   const [targetUser, setTargetUser] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [userData, setUserData] = useState(null);
+  const [, setUserData] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();

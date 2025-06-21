@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { useParams, Navigate, useNavigate } from 'react-router-dom'
 import FeedbackForm from '../components/FeedbackForm'
 import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
 
 const FeedbackPage: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();

@@ -1,18 +1,13 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { format, addDays } from 'date-fns'
-import { id } from 'date-fns/locale'
 import { toast } from 'sonner'
 import { useAuthStore } from '../store/authStore'
 import { useFeedbackStore } from '../store/feedbackStore'
 import { DashboardSkeleton } from '../components/LoadingStates'
 import { useAnnouncement } from '../components/Accessibility'
 import { AIFeedbackCard } from '../components/AIFeedbackCard'
-import { VirtualizedFeedbackList } from '../components/VirtualizedFeedbackList'
-import { Pagination, PaginationInfo } from '../components/Pagination'
-import { usePagination } from '../hooks/usePagination'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -28,45 +23,31 @@ import {
   Search, 
   MessageSquare, 
   Star,
-  TrendingUp, 
-  Users, 
   Calendar as CalendarIcon,
-  Filter,
   RefreshCw,
-  ExternalLink,
   Share2,
   Bell,
-  Copy,
   Moon,
   Sun,
-  ChevronDown,
-  ChevronUp,
   Heart,
   Repeat,
-  HelpCircle,
-  BarChart3,
-  Settings,
   Plus,
   Menu,
   X,
   Download,
   CheckSquare,
-  Square,
   Trash2,
   Archive,
-  MoreHorizontal,
-  Command,
   Keyboard,
   CheckCircle,
   Eye,
   Send,
   Brain,
   Sparkles,
-  Zap,
   Languages
 } from 'lucide-react'
-import { formatRelativeTime, getSentimentColor, getSentimentIcon } from '@/lib/utils'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { formatRelativeTime } from '@/lib/utils'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Textarea } from '@/components/ui/textarea'
 // import { useCallback, useEffect, useMemo, useState } from 'react'
 
@@ -95,9 +76,7 @@ const DashboardPage: React.FC = () => {
     markAsRead,
     markAsDone,
     processFeedbackWithAI,
-    batchProcessFeedbackWithAI,
-    updateFeedbackSentiment
-  } = useFeedbackStore();
+    batchProcessFeedbackWithAI  } = useFeedbackStore();
   const { announce } = useAnnouncement();
   
   // Helper functions - getSentimentIcon is imported from utils
@@ -106,7 +85,7 @@ const DashboardPage: React.FC = () => {
   const [shareUrl, setShareUrl] = useState<string>('')
   const [userMood, setUserMood] = useState<string>('😊')
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false)
-  const [isStatsCollapsed, setIsStatsCollapsed] = useState<boolean>(false)
+  // const [] = useState<boolean>(false)
   const [feedbackReactions, setFeedbackReactions] = useState<{[key: string]: string}>({})
   
   // New state for enhanced features
@@ -127,7 +106,7 @@ const DashboardPage: React.FC = () => {
   // AI-powered features state
   const [showAIAnalysis, setShowAIAnalysis] = useState(false)
   const [aiProcessingQueue, setAiProcessingQueue] = useState<Set<string>>(new Set())
-  const [selectedResponseSuggestion, setSelectedResponseSuggestion] = useState<{[key: string]: string}>({})
+  const [, setSelectedResponseSuggestion] = useState<{[key: string]: string}>({})
   const [showTranslations, setShowTranslations] = useState(true)
 
   // Dark mode persistence
@@ -974,7 +953,6 @@ const DashboardPage: React.FC = () => {
                 </div>
               ) : (
                 filteredFeedback.map((feedback) => {
-                  const SentimentIcon = getSentimentIcon(feedback.sentiment)
                   const isSelected = selectedFeedback.has(feedback.id || '')
                   const isProcessingAI = aiProcessingQueue.has(feedback.id || '')
                   

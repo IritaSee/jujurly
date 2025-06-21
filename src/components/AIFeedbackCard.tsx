@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -44,27 +44,13 @@ interface AIFeedbackCardProps {
 
 export function AIFeedbackCard({ 
   feedback, 
-  isSelected, 
   isProcessingAI, 
   showTranslations, 
-  bulkActionMode, 
-  selectedFeedback, 
-  feedbackReactions, 
-  draftResponses, 
-  archivedFeedback, 
-  onMarkAsRead, 
-  onMarkAsDone, 
-  onBulkSelect, 
-  onReaction, 
-  onPreview, 
-  onArchive, 
-  onDraftResponse, 
-  onSendResponse, 
   onProcessWithAI, 
   onSelectSuggestion, 
   onResponseSelect 
 }: AIFeedbackCardProps) {
-  const { processFeedbackWithAI } = useFeedbackStore();
+  useFeedbackStore();
   const [selectedSuggestion, setSelectedSuggestion] = useState<string>('');
   const [isExpanded, setIsExpanded] = useState(false);
 

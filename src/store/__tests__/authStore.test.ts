@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { useAuthStore } from '../authStore'
-import { mockFetchSuccess, mockFetchError, waitForAsync } from '@/test/utils'
+import { mockFetchSuccess, mockFetchError } from '@/test/utils'
 
 describe('AuthStore', () => {
   beforeEach(() => {
