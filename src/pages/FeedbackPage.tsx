@@ -1,7 +1,8 @@
 // src/pages/FeedbackPage.tsx
-import React, { useEffect, useState } from 'react';
-import { useParams, Navigate, useNavigate } from 'react-router-dom';
-import FeedbackForm from '../components/FeedbackForm';
+import React, { useEffect, useState } from 'react'
+import { useParams, Navigate, useNavigate } from 'react-router-dom'
+import FeedbackForm from '../components/FeedbackForm'
+import { Card, CardContent } from '@/components/ui/card'
 
 const FeedbackPage: React.FC = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -43,14 +44,25 @@ const FeedbackPage: React.FC = () => {
     return <Navigate to="/" replace />;
   }
   if (checking) {
-    return <div style={{textAlign: 'center', marginTop: '2rem'}}>Mengecek pengguna...</div>;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="p-6 text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Mengecek pengguna...</p>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
   if (userExists === false) {
     return null; // Will redirect
   }
   return (
-    <FeedbackForm userId={userId} />
-  );
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+      <FeedbackForm recipientUsername={userId} />
+    </div>
+  )
 };
 
 export default FeedbackPage;
