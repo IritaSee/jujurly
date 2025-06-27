@@ -1,24 +1,19 @@
-// src/pages/DashboardPage.tsx
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import './DashboardPage.css'; // We'll create this CSS file
+import { useNavigate } from 'react-router-dom';
+import './DashboardPage.css';
 
-// Placeholder for actual authentication and data fetching logic
-const isAuthenticated = true; // Assume user is logged in for now
-// const username = "iganarendra"; // Placeholder username
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
 interface FeedbackItem {
   id: number;
-  timestamp: string; // ISO 8601 string from backend
+  timestamp: string;
   sender: string;
   context: string;
-  sentiment: string; // Includes emoji from backend
+  sentiment: string;
   summary: string;
   constructiveCriticism: string;
 }
 
-// Function to format ISO date string to a more readable format
 const formatTimestamp = (isoString: string): string => {
   const date = new Date(isoString);
   return date.toLocaleString('id-ID', {
@@ -31,24 +26,21 @@ const formatTimestamp = (isoString: string): string => {
   });
 };
 
-// Function to get a CSS class based on sentiment string
 const getSentimentClass = (sentimentString: string): string => {
   const lowerSentiment = sentimentString.toLowerCase();
   if (lowerSentiment.includes('positif')) return 'sentiment-positif';
   if (lowerSentiment.includes('negatif')) return 'sentiment-negatif';
-  // Default to neutral if no specific keyword found or if it's explicitly neutral
   return 'sentiment-netral';
 };
 
-// Updated API function to fetch data from the backend
 const fetchFeedbacksForUser = async (user: string): Promise<FeedbackItem[]> => {
-  console.log(`Fetching feedback for ${user} from backend...`);
+  // Removed console.log to avoid no-console warning
   const response = await fetch(`${API_URL}/api/users/${user}/feedbacks`);
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({ message: 'Failed to fetch feedbacks and parse error' }));
     throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
   }
-  const data: FeedbackItem[] = await response.json();
+  const data = (await response.json()) as FeedbackItem[];
   return data;
 };
 
@@ -56,82 +48,119 @@ const DashboardPage: React.FC = () => {
   const [feedbacks, setFeedbacks] = useState<FeedbackItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
-  // Function to handle logout
   const handleLogout = () => {
-    localStorage.removeItem('userData'); // Clear user data
-    navigate('/login'); // Redirect to login page
+    localStorage.removeItem('userData');
+    navigate('/login');
   };
 
   useEffect(() => {
-    if (isAuthenticated) {
+    const loadFeedbacks = async () => {
       setIsLoading(true);
       setError(null);
-      const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-      const username = userData.username;
-      if (username) {
-        fetchFeedbacksForUser(username)
-          .then(data => {
-            setFeedbacks(data);
-            setIsLoading(false);
-          })
-          .catch(err => {
-            console.error("Failed to fetch feedbacks:", err);
-            setError(err.message || "Duh, gagal ngambil feedback nih. Coba lagi nanti ya.");
-            setIsLoading(false);
-          });
-      } else {
-        setError("Username tidak ditemukan. Silakan login kembali.");
-        setIsLoading(false);
-      }
-    } else {
-      setIsLoading(false); // Not authenticated
-    }
-  }, []); // Refetch if username changes
 
-  if (!isAuthenticated) {
-    // Later, this could redirect to a login/signup page
-    return (
-      <div className="dashboard-container">
-        <header className="dashboard-header">
-          <h1>Jujurly Dashboard</h1>
-        </header>
-        <main>
-          <p>Waduh, kayaknya kamu belum login nih. Login dulu ya!</p>
-          {/* <Link to="/login">Login/Signup</Link> */}
-        </main>
-      </div>
-    );
+      const storedUserData = localStorage.getItem('userData');
+      if (!storedUserData) {
+        setError('Username tidak ditemukan. Silakan login kembali.');
+        setIsLoading(false);
+        return;
+      }
+
+      // Try parse and validate username
+      let userData: unknown;
+      try {
+        userData = JSON.parse(storedUserData);
+      } catch {
+        setError('Data pengguna tidak valid. Silakan login kembali.');
+        setIsLoading(false);
+        return;
+      }
+
+      if (
+        typeof userData === 'object' &&
+        userData !== null &&
+        'username' in userData &&
+        typeof (userData as Record<string, unknown>).username === 'string'
+      ) {
+        const username = (userData as { username: string }).username;
+        try {
+          const fetchedFeedbacks = await fetchFeedbacksForUser(username);
+          setFeedbacks(fetchedFeedbacks);
+        } catch (err) {
+          const message =
+            err instanceof Error ? err.message : 'Duh, gagal ngambil feedback nih. Coba lagi nanti ya.';
+          setError(message);
+        }
+      } else {
+        setError('Username tidak ditemukan. Silakan login kembali.');
+      }
+
+      setIsLoading(false);
+    };
+
+    if (true /* replace with your real auth check */) {
+      void loadFeedbacks(); // eslint-disable-line @typescript-eslint/no-floating-promises
+    } else {
+      setIsLoading(false);
+    }
+  }, [navigate]);
+
+  // Safe get username for render
+  let username = '';
+  const storedUserData = localStorage.getItem('userData');
+  if (storedUserData) {
+    try {
+      const parsed = JSON.parse(storedUserData);
+      if (typeof parsed === 'object' && parsed !== null && 'username' in parsed && typeof parsed.username === 'string') {
+        username = parsed.username;
+      }
+    } catch {
+      // fallback username empty
+    }
   }
 
-  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-  const username = userData.username;
   const feedbackLink = `https://jujur.ly/ke/${username}`;
 
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
-        <h1>Dashboard Punya {username}</h1>
-        <p>Link spesial buat kamu bagiin: <a href={feedbackLink} target="_blank" rel="noopener noreferrer">{feedbackLink}</a></p>
-        <button onClick={handleLogout} className="logout-button">Logout</button> {/* Add logout button */}
+        <h1>Dashboard Punya {username || 'User'}</h1>
+        <p>
+          Link spesial buat kamu bagiin:{' '}
+          <a href={feedbackLink} target="_blank" rel="noopener noreferrer">
+            {feedbackLink}
+          </a>
+        </p>
+        <button onClick={handleLogout} className="logout-button" type="button">
+          Logout
+        </button>
       </header>
       <main className="dashboard-main">
         <h2>Ini Dia Feedback Buat Kamu:</h2>
         {isLoading && <p>Lagi ngambil feedback, sabar ya...</p>}
         {error && <p className="error-message">{error}</p>}
-        {!isLoading && !error && feedbacks.length === 0 && (
-          <p>Belum ada feedback nih. Coba sebarin link kamu gih!</p>
-        )}
+        {!isLoading && !error && feedbacks.length === 0 && <p>Belum ada feedback nih. Coba sebarin link kamu gih!</p>}
         {!isLoading && !error && feedbacks.length > 0 && (
           <div className="feedback-list">
-            {feedbacks.map(fb => (
+            {feedbacks.map((fb) => (
               <div key={fb.id} className="feedback-item">
                 <h3>Feedback #{fb.id}</h3>
-                <p><strong>Pengirim:</strong> {fb.sender || 'Anonim'}</p>
-                <p><strong>Waktu:</strong> {formatTimestamp(fb.timestamp)}</p>
-                {fb.context && fb.context !== '-' && <p><strong>Konteks:</strong> {fb.context}</p>}
-                <p><strong>Sentimen:</strong> <span className={`sentiment ${getSentimentClass(fb.sentiment)}`}>{fb.sentiment}</span></p>
+                <p>
+                  <strong>Pengirim:</strong> {fb.sender || 'Anonim'}
+                </p>
+                <p>
+                  <strong>Waktu:</strong> {formatTimestamp(fb.timestamp)}
+                </p>
+                {fb.context && fb.context !== '-' && (
+                  <p>
+                    <strong>Konteks:</strong> {fb.context}
+                  </p>
+                )}
+                <p>
+                  <strong>Sentimen:</strong>{' '}
+                  <span className={`sentiment ${getSentimentClass(fb.sentiment)}`}>{fb.sentiment}</span>
+                </p>
                 <div className="feedback-content">
                   <h4>Ringkasan (dari LLM):</h4>
                   <p>{fb.summary}</p>
