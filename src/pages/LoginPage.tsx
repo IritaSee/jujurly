@@ -1,7 +1,5 @@
-// src/pages/LoginPage.tsx
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './LoginPage.css';
 
 const LoginPage: React.FC = () => {
   const [emailOrUsername, setEmailOrUsername] = useState('');
@@ -10,19 +8,18 @@ const LoginPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent): Promise<void> => {
     event.preventDefault();
     setError('');
     setLoading(true);
 
-    // Basic validation
     if (!emailOrUsername || !password) {
       setError('Email/Username dan password tidak boleh kosong.');
       setLoading(false);
       return;
     }
 
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001'; 
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 
     try {
       const response = await fetch(`${API_URL}/api/auth/login`, {
@@ -30,86 +27,111 @@ const LoginPage: React.FC = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        // Send 'identifier' instead of 'emailOrUsername' to match backend
-        body: JSON.stringify({ identifier: emailOrUsername, password }), 
+        body: JSON.stringify({ identifier: emailOrUsername, password }),
       });
-
-      setLoading(false);
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Login successful:', data);
-        // In a real app, you would store a token and user info in a global state/context
-        // For example, using localStorage (ensure to handle security implications):
-        localStorage.setItem('userData', JSON.stringify(data)); 
-        // localStorage.setItem('userToken', data.token); // If backend returns a token
-        navigate('/dashboard'); 
+        localStorage.setItem('userData', JSON.stringify(data));
+        navigate('/dashboard');
       } else {
         let errorDisplayMessage = 'Login gagal. Periksa kembali email/username dan password kamu.';
-        // Log the raw response status
-        console.error(`Login API request failed with status: ${response.status}`);
         try {
-          const errorData = await response.json();
-          // Log the detailed error from the backend if available
-          console.error('Backend error details:', errorData);
-          if (errorData && errorData.message) {
+          const errorData = (await response.json()) as { message?: string };
+          if (errorData?.message) {
             errorDisplayMessage = errorData.message;
           }
-        } catch (jsonParseError) {
-          // This catch block handles errors if response.json() fails (e.g., empty response or not JSON)
-          console.error('Failed to parse backend error response as JSON:', jsonParseError);
-          // You could try to get text from the response if JSON parsing fails:
-          // try {
-          //   const textError = await response.text();
-          //   console.error('Backend error response text:', textError);
-          //   if (textError) errorDisplayMessage = textError;
-          // } catch (textParseError) {
-          //   console.error('Failed to get text from backend error response:', textParseError);
-          // }
+        } catch {
+          // Jika parsing gagal, gunakan pesan default
         }
         setError(errorDisplayMessage);
       }
-      
-    } catch (err) {
-      setLoading(false);
+    } catch {
       setError('Terjadi kesalahan. Coba lagi nanti ya.');
-      console.error('Login error:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        <h1>Masuk ke Jujurly</h1>
-        <p>Belum punya akun? <Link to="/register">Daftar di sini</Link></p>
-        <p className="forgot-password-text">
-          Lupa password? <Link to="/forgot-password">Reset di sini</Link>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-indigo-200 px-4 relative">
+    <button
+      type="button"
+      onClick={() => navigate(-1)}
+      className="absolute top-6 left-6 flex items-center gap-2 text-white bg-sky-500 hover:bg-sky-600 font-medium px-4 py-2 rounded-lg shadow transition duration-200"
+      style={{ backgroundColor: '#0ea5e9' }}
+    >
+
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth={1.5}
+        stroke="currentColor"
+        className="w-4 h-4"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+      </svg>
+      Kembali
+    </button>
+
+      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
+        <h2 className="text-3xl font-bold text-center mb-2 mt-2">
+          Masuk ke <span className="text-blue-600">Jujurly</span>
+        </h2>
+        <p className="text-sm text-center text-gray-500 mb-2">
+          Belum punya akun?{' '}
+          <Link to="/register" className="text-blue-500 hover:underline">
+            Daftar di sini
+          </Link>
         </p>
-        <form onSubmit={handleSubmit} className="login-form">
-          {error && <p className="error-message">{error}</p>}
-          <div className="form-group">
-            <label htmlFor="emailOrUsername">Email atau Username</label>
+        <p className="text-sm text-center text-gray-500 mb-4">
+          Lupa password?{' '}
+          <Link to="/forgot-password" className="text-blue-500 hover:underline">
+            Reset di sini
+          </Link>
+        </p>
+
+        {error && <p className="bg-red-100 text-red-700 px-4 py-2 rounded-md text-sm mb-4">{error}</p>}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="emailOrUsername" className="block text-sm font-medium text-gray-700 mb-1">
+              Email atau Username
+            </label>
             <input
               type="text"
               id="emailOrUsername"
               value={emailOrUsername}
               onChange={(e) => setEmailOrUsername(e.target.value)}
-              placeholder="Masukkan email atau username kamu"
+              placeholder="username atau email"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={loading}
+              required
             />
           </div>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Masukkan password kamu"
+              placeholder="password kamu"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               disabled={loading}
+              required
             />
           </div>
-          <button type="submit" className="login-button" disabled={loading}>
+
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white py-2 rounded-lg shadow-md transition"
+            disabled={loading}
+          >
             {loading ? 'Lagi diproses...' : 'Masuk'}
           </button>
         </form>
