@@ -1,54 +1,49 @@
-# React + TypeScript + Vite
+## This Frontend Service from Jujurly Feedback - Jujurly
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+First , I create the project using React Vite JS enviroment to get pretty create for react js framework.
 
-Currently, two official plugins are available:
+## Build With
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [TypeScript](https://www.typescriptlang.org/) - TypeScript is a strongly typed programming language that builds on JavaScript, giving you better tooling at any scale
+- [Node JS](https://nodejs.org/en) - Node.js® is an open-source, cross-platform JavaScript runtime environment.
+- [React JS](https://react.dev/) - React lets you build user interfaces out of individual pieces called components.
+- [MUI](https://mui.com/) - MUI offers a comprehensive suite of free UI tools to help you ship new features faster.
+- [Redux](https://redux.js.org/) - The Redux DevTools make it easy to trace when, where, why, and how your application's state changed.
+- [Axios](https://axios-http.com/docs/intro/) - Axios is a promise-based HTTP Client for node.js and the browser
+- [Atomic Design](hhttps://atomicdesign.bradfrost.com/chapter-2/) - Atomic design is atoms, molecules, organisms, templates, and pages concurrently working together to create effective interface design systems
 
-## Expanding the ESLint configuration
+## FYI
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- First, i create the project with next ts configuration
+- After that we manage the state managament using redux
+- Configuration Axios for fetchinable API Service
+- Use pattern structure with atomic design
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Getting Started
+
+if you need to start api from your local and you want to change more algorithm from this, u can cloning first:
+
+```sh
+$ git clone https://github.com/
+$ cd frontend
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Usage
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+before you run this you must installation package to make the program its not error for u.
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```sh
+$ npm install
+```
+
+NB : Before you start the apps you should addded confguration to .env
+
+```javascript
+VITE_API_URL = "BACKEND URL FOR DEVELOPMENT";
+```
+
+run the server with Node JS runtime
+
+```sh
+$ npm run dev
 ```
