@@ -15,7 +15,7 @@ import * as userRepository from "../../api/repository/userRepository";
 
 const UserLookupPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [userData, setUserData] = useState(null);
+  const [,setUserData] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,9 +48,9 @@ const UserLookupPage: React.FC = () => {
         );
       }
       setIsLoading(false);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setIsLoading(false);
-      if (error?.status === 404) {
+      if (typeof error === "object" && error !== null && "status" in error && (error as { status?: number }).status === 404) {
         toast.update(
           toastId,
           updateToastConfig("User yang kamu cari gak ada", "error")

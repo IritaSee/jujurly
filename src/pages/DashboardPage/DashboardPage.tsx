@@ -67,7 +67,7 @@ const DashboardPage: React.FC = () => {
     // setIsLoading(true);
     try {
       const res = await feedbackRepository.getFeedbacks();
-      if (res.statusNumber == 200) {
+      if (res.statusNumber === 200) {
         if (Array.isArray(res.data)) {
           setFeedbacks(res.data);
           setCurrentFeedbacks(res.data);
